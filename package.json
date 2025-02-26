@@ -10,8 +10,8 @@
   "description": "",
   "dependencies": {
     "@types/ws": "^8.5.14",
+    "socket.io": "^4.8.1",
     "tsx": "^4.19.3",
-    "typescript": "^5.7.3",
-    "ws": "^8.18.1"
+    "typescript": "^5.7.3"
   }
 }
