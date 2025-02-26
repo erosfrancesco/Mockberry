@@ -17,12 +17,13 @@ export const handleSubcribe = (data: IGpioSubscriptionRequestData, board: Board,
     callback(eventData)
 }
 
-export const handlePinInput = (data: IGpioSubscriptionRequestData, board: Board, callback: (data: IGpioOutputResponse["data"]) => void) => {
+export const handlePinOutput = (data: IGpioSubscriptionRequestData, board: Board, callback: (data: IGpioOutputResponse["data"]) => void) => {
     const { pin, id } = data;
     const gpio = board[pin];
     const { status } = gpio;
 
-    if (gpio.status !== PinTypes.INPUT) {
+    console.log('[MOCK]: Output of pin: ', pin);
+    if (gpio.status === PinTypes.OUTPUT) {
         gpio.listening = mockPinOutput(pin, (pinData) => {
             const eventData: IGpioOutputResponse["data"] = { status, pin, data: pinData, id };
             callback(eventData);
