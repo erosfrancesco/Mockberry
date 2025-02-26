@@ -1,18 +1,18 @@
 import { WebSocket } from "ws";
-import { EventServiceType, ICommandOutput, ISendCommand } from "./config/ws.ts";
-
+import { EventServiceType, ICommandInputData, ICommandOutputData, ICommandOutputResponse } from "./config/ws.ts";
 
 export const commandService = (ws: WebSocket) => {
     ws.on('message', function (message) {
         const parsed = JSON.parse(message.toString());
-        const { type, folder } = parsed;
+        const { type } = parsed;
 
         if (type !== EventServiceType.command) {
             return;
         }
 
-        const data: ICommandOutput = { output: '[' + folder + ']: Output command', folder };
-        const event: ISendCommand = { data, type };
+        const { folder } = parsed.data as ICommandInputData;
+        const data: ICommandOutputData = { output: '[' + folder + ']: Output command', folder };
+        const event: ICommandOutputResponse = { data, type };
 
         ws.send(JSON.stringify(event));
     });
