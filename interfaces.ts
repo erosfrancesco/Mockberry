@@ -10,7 +10,7 @@ export interface Intervallable {
 }
 
 export interface WebSocketEvent {
-    type: EventServiceType;
+    type: EventServiceType | string;
     request?: SerialServiceActions | GpioServiceActions;
     data: any;
 };

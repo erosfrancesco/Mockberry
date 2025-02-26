@@ -1,3 +1,4 @@
+import { PinTypes } from "../gpio/interface";
 import { WebSocketEvent } from "../interfaces";
 import { GpioServiceActions } from "./ws";
 
@@ -5,6 +6,11 @@ import { GpioServiceActions } from "./ws";
 interface IGpioActionData {
     pin: number;
     id: string;
+    status: PinTypes;
+}
+
+interface IGpioActionOutput extends IGpioActionData {
+    data: any;
 }
 
 export interface IGpioSubscriptionRequestData {
@@ -26,5 +32,5 @@ export interface IGpioUnsubscriptionResponse extends WebSocketEvent {
 
 export interface IGpioOutputResponse extends WebSocketEvent {
     request: GpioServiceActions.OUTPUT;
-    data: IGpioActionData;
+    data: IGpioActionOutput;
 }

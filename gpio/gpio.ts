@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { EventServiceType, GpioServiceActions, IGpioOutputResponse, IGpioSubscriptionRequestData, IGpioSubscriptionResponse, IGpioUnsubscriptionResponse } from "../config/ws.ts";
-import { Board, PinTypes } from "./interface.ts";
-import { mockPinOutput } from "./index.ts";
+import { Board } from "./interface.ts";
+import { handlePinInput, handleSubcribe, handleUnsubscribe } from "./handlers.ts";
 
 
 export const gpioService = (ws: WebSocket, board: Board) => {
@@ -13,45 +13,32 @@ export const gpioService = (ws: WebSocket, board: Board) => {
             return;
         }
 
-        const { pin, id, request } = parsed.data as IGpioSubscriptionRequestData;
+        const { pin, request } = parsed.data as IGpioSubscriptionRequestData;
         const gpio = board[pin];
 
         if (!gpio) {
             console.log('[MOCK]: Pin ' + pin + ' not found on Board.')
             return;
         }
-        const { status, subscribed } = gpio;
 
         if (request === GpioServiceActions.SUBSCRIBE) {
-            console.log('[MOCK]: Subscribe to pin: ', pin);
-            if (!subscribed.has(id)) {
-                subscribed.add(id);
-            }
+            handleSubcribe(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+                const event: IGpioSubscriptionResponse = { type, request: GpioServiceActions.SUBSCRIBE, data };
+                ws.send(JSON.stringify(event));
+            });
 
-            if (gpio.status !== PinTypes.INPUT) {
-                gpio.listening = mockPinOutput(pin, (pinData) => {
-                    const data = { status, pin, data: pinData, id };
-                    const event: IGpioOutputResponse = { type, request: GpioServiceActions.OUTPUT, data };
-                    ws.send(JSON.stringify(event));
-                });
-            }
-
-            const data = { status, pin, id };
-            const event: IGpioSubscriptionResponse = { type, request, data };
-            ws.send(JSON.stringify(event));
+            handlePinInput(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+                const event: IGpioOutputResponse = { type, request: GpioServiceActions.OUTPUT, data };
+                ws.send(JSON.stringify(event));
+            });
+            return;
         }
 
         if (request === GpioServiceActions.UNSUBSCRIBE) {
-            console.log('[MOCK]: Unsubscribe to pin: ', pin);
-            if (subscribed.has(id)) {
-                subscribed.delete(id);
-            }
-
-            clearInterval(gpio.listening);
-
-            const data = { status, pin, id };
-            const event: IGpioUnsubscriptionResponse = { type, request, data };
-            ws.send(JSON.stringify(event));
+            handleUnsubscribe(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+                const event: IGpioUnsubscriptionResponse = { type, request, data };
+                ws.send(JSON.stringify(event));
+            });
             return;
         }
 

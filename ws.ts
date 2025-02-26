@@ -1,7 +1,7 @@
 import { WebSocketServer } from "ws";
 import { port, path } from "./config/ws.ts";
 
-import commandService from "./commands.ts";
+import commandService from "./commands";
 import gpioService from "./gpio";
 import serialService from "./serial";
 
