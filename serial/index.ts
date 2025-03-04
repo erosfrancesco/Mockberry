@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { EventServiceType, ISerialSubscriptionRequestData, ISerialSubscriptionResponse, ISerialUnsubscriptionResponse, SerialServiceActions } from "../config/ws.ts";
 import updateMockSerialConnection, { serial } from "./serial.ts";
+import { handleSubscribe, handleUnsubscribe } from "./handlers.ts";
 
 export const serialService = (ws: WebSocket) => {
     ws.on('message', function (message) {
@@ -11,33 +12,43 @@ export const serialService = (ws: WebSocket) => {
             return;
         }
 
-        const { address, id, request } = parsed.data as ISerialSubscriptionRequestData;
-        const config = serial[address];
+        const { address, request } = parsed.data as ISerialSubscriptionRequestData;
+        const channel = serial[address];
 
-        if (!config) {
-            console.log('[MOCK]: Serial ' + address + ' not found on Board.')
+        if (!channel) {
+            console.log('[MOCK]: Serial channel ' + address + ' not found on Board.')
             return;
         }
 
-        const { subscribed, listening, ...serialConfig } = config;
         if (request === SerialServiceActions.SUBSCRIBE) {
-            console.log('[MOCK]: Subscribe to Serial Address: ', address);
+            handleSubscribe(parsed.data as ISerialSubscriptionRequestData, serial, (data) => {
+                const event: ISerialSubscriptionResponse = {
+                    type,
+                    request: SerialServiceActions.SUBSCRIBE,
+                    data
+                };
+                ws.send(JSON.stringify(event));
+            });
+
+            /*
             if (!subscribed.has(id)) {
-                subscribed.add(id);
                 updateMockSerialConnection(address, (data) => ws.send(JSON.stringify({ type, ...data })));
             }
-
-            const data = { address, id, config: serialConfig };
-            const event: ISerialSubscriptionResponse = {
-                type,
-                request: SerialServiceActions.SUBSCRIBE,
-                data
-            };
-            ws.send(JSON.stringify(event));
+            /** */
             return;
         }
 
         if (request === SerialServiceActions.UNSUBSCRIBE) {
+            handleUnsubscribe(parsed.data as ISerialSubscriptionRequestData, serial, (data) => {
+                const event: ISerialUnsubscriptionResponse = {
+                    type,
+                    request: SerialServiceActions.UNSUBSCRIBE,
+                    data
+                };
+                ws.send(JSON.stringify(event));
+            });
+
+            /*
             console.log('[MOCK]: Unsubscribe to Serial Address: ', address, id);
             if (subscribed.has(id)) {
                 subscribed.delete(id);
@@ -45,14 +56,15 @@ export const serialService = (ws: WebSocket) => {
             }
 
             const data = {
-                address, id, config: serialConfig
-            }
+                address, id, config
+            };
             const event: ISerialUnsubscriptionResponse = {
                 type,
                 request: SerialServiceActions.UNSUBSCRIBE,
                 data
             };
             ws.send(JSON.stringify(event));
+            /** */
             return;
         }
     });
