@@ -9,8 +9,8 @@ export const handleSubcribe = (data: IGpioSubscriptionRequestData, board: Board,
     const { status, subscribed } = gpio;
 
     console.log('[MOCK]: Subscribe to pin: ', pin);
-    if (!subscribed.has(id)) {
-        subscribed.add(id);
+    if (!subscribed.value.has(id)) {
+        subscribed.value.add(id);
     }
 
     const eventData: IGpioSubscriptionResponse["data"] = { status, pin, id };
@@ -37,8 +37,8 @@ export const handleUnsubscribe = (data: IGpioSubscriptionRequestData, board: Boa
     const { status, subscribed } = gpio;
 
     console.log('[MOCK]: Unsubscribe to pin: ', pin);
-    if (subscribed.has(id)) {
-        subscribed.delete(id);
+    if (subscribed.value.has(id)) {
+        subscribed.value.delete(id);
     }
 
     clearInterval(gpio.listening);
