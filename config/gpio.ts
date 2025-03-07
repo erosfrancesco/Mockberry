@@ -13,10 +13,17 @@ interface IGpioActionOutput extends IGpioActionData {
     data: any;
 }
 
-export interface IGpioSubscriptionRequestData {
+//
+export interface IGpioActionRequestData {
     pin: number;
     id: string;
     request: GpioServiceActions;
+}
+
+export interface IGpioSubscriptionRequestData extends IGpioActionRequestData { }
+export interface IGpioUnsubscriptionRequestData extends IGpioActionRequestData { }
+export interface IGpioStatusRequestData extends IGpioActionRequestData {
+    status: PinTypes;
 }
 
 //
@@ -33,4 +40,9 @@ export interface IGpioUnsubscriptionResponse extends WebSocketEvent {
 export interface IGpioOutputResponse extends WebSocketEvent {
     request: GpioServiceActions.OUTPUT;
     data: IGpioActionOutput;
+}
+
+export interface IGpioStatusResponse extends WebSocketEvent {
+    request: GpioServiceActions.SETSTATUS;
+    data: IGpioActionData;
 }

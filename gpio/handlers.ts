@@ -1,4 +1,4 @@
-import { IGpioOutputResponse, IGpioSubscriptionRequestData, IGpioSubscriptionResponse, IGpioUnsubscriptionResponse } from "../config/ws.ts";
+import { IGpioOutputResponse, IGpioStatusRequestData, IGpioSubscriptionRequestData, IGpioSubscriptionResponse, IGpioUnsubscriptionResponse } from "../config/ws.ts";
 import { Board, PinTypes } from "./interface.ts";
 import { mockPinOutput } from "./index.ts";
 
@@ -45,4 +45,23 @@ export const handleUnsubscribe = (data: IGpioSubscriptionRequestData, board: Boa
 
     const eventData: IGpioUnsubscriptionResponse["data"] = { status, pin, id };
     callback(eventData);
+}
+
+export const handleStatusChange = (data: IGpioStatusRequestData, board: Board, callback: () => void) => {
+    const { pin, id, status } = data;
+    const gpio = board[pin];
+    const { status: oldStatus, subscribed } = gpio;
+
+    console.log('[MOCK]: Change pin status: ', pin);
+    
+    if (oldStatus === PinTypes.OUTPUT || oldStatus === PinTypes.SERVO) {
+        clearInterval(gpio.listening);
+    }
+
+    board[pin].status = status;
+    if (status === PinTypes.OUTPUT || status === PinTypes.SERVO) {
+        clearInterval(gpio.listening);
+    }
+
+    callback();
 }

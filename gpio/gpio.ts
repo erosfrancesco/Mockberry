@@ -1,7 +1,11 @@
 import { WebSocket } from "ws";
-import { EventServiceType, GpioServiceActions, IGpioOutputResponse, IGpioSubscriptionRequestData, IGpioSubscriptionResponse, IGpioUnsubscriptionResponse } from "../config/ws.ts";
+import {
+    EventServiceType, GpioServiceActions, IGpioOutputResponse,
+    IGpioActionRequestData, IGpioSubscriptionRequestData, IGpioUnsubscriptionRequestData, IGpioStatusRequestData,
+    IGpioSubscriptionResponse, IGpioUnsubscriptionResponse, IGpioStatusResponse
+} from "../config/ws.ts";
 import { Board } from "./interface.ts";
-import { handlePinOutput, handleSubcribe, handleUnsubscribe } from "./handlers.ts";
+import { handlePinOutput, handleSubcribe, handleUnsubscribe, handleStatusChange } from "./handlers.ts";
 
 
 export const gpioService = (ws: WebSocket, board: Board) => {
@@ -13,7 +17,7 @@ export const gpioService = (ws: WebSocket, board: Board) => {
             return;
         }
 
-        const { pin, request } = parsed.data as IGpioSubscriptionRequestData;
+        const { pin, request } = parsed.data as IGpioActionRequestData;
         const gpio = board[pin];
 
         if (!gpio) {
@@ -22,12 +26,14 @@ export const gpioService = (ws: WebSocket, board: Board) => {
         }
 
         if (request === GpioServiceActions.SUBSCRIBE) {
-            handleSubcribe(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+            const payload = parsed.data as IGpioSubscriptionRequestData;
+
+            handleSubcribe(payload, board, (data) => {
                 const event: IGpioSubscriptionResponse = { type, request: GpioServiceActions.SUBSCRIBE, data };
                 ws.send(JSON.stringify(event));
             });
 
-            handlePinOutput(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+            handlePinOutput(payload, board, (data) => {
                 const event: IGpioOutputResponse = { type, request: GpioServiceActions.OUTPUT, data };
                 ws.send(JSON.stringify(event));
             });
@@ -35,7 +41,9 @@ export const gpioService = (ws: WebSocket, board: Board) => {
         }
 
         if (request === GpioServiceActions.UNSUBSCRIBE) {
-            handleUnsubscribe(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+            const payload = parsed.data as IGpioUnsubscriptionRequestData;
+
+            handleUnsubscribe(payload, board, (data) => {
                 const event: IGpioUnsubscriptionResponse = { type, request, data };
                 ws.send(JSON.stringify(event));
             });
@@ -44,6 +52,12 @@ export const gpioService = (ws: WebSocket, board: Board) => {
 
         // TODO: - 
         if (request === GpioServiceActions.SETSTATUS) {
+            const payload = parsed.data as IGpioStatusRequestData;
+
+            handleStatusChange(payload, board, () => {
+                const event: IGpioStatusResponse = { type, request, data: { pin, id, status } };
+                ws.send(JSON.stringify(event));
+            });
             return;
         }
     });
