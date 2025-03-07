@@ -1,6 +1,9 @@
+import { WebSocket } from "ws";
 import { PinTypes } from "../gpio/interface.ts";
 import { WebSocketBridge, WSSubscribableMixin } from "./utils.ts";
 
+
+//
 const mockPinData = (wsGpio: WSGpio): Object | undefined => {
     const { type: status } = wsGpio;
 
@@ -18,10 +21,11 @@ const mockPinData = (wsGpio: WSGpio): Object | undefined => {
         }
     }
 }
+//
 
 
 class WSGpio extends WSSubscribableMixin {
-    constructor(ws, { type, timingMs }: IPinSettings) {
+    constructor(ws: WebSocket, { type, timingMs }: IPinSettings) {
         super(ws);
         this.type = type;
 

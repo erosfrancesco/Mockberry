@@ -55,7 +55,7 @@ export class SubscriptionEvents extends Subscribable {
 
 
 export class WSSubscribableMixin extends SubscriptionEvents implements WebSocketBridge {
-    constructor(ws) {
+    constructor(ws: WebSocket) {
         super();
         this.ws = ws;
     }
