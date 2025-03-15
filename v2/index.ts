@@ -4,6 +4,7 @@ import WSPinout from "./pinout.ts";
 import { WebSocketBridge } from "./utils.ts";
 import WSCommand from "./command.ts";
 import { PinTypes } from "../gpio/interface.ts";
+import WSSerial from "./serial.ts";
 
 const wss = new WebSocketServer({ path, port });
 console.log('[MOCK] ready on localhost' + path + ':' + port);
@@ -19,6 +20,7 @@ wss.on('connection', function connection(ws) {
 
 
 class WSBoard extends WebSocketBridge {
+    i2c = new WSSerial(this.ws);
     pinout = new WSPinout(this.ws, [{ pin: 4, type: PinTypes.INPUT }]);
     command = new WSCommand(this.ws);
 };

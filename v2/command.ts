@@ -5,7 +5,8 @@ export class WSCommand extends WebSocketBridge {
     constructor(ws) {
         super(ws);
 
-        ws.on('message', function (message) {
+        // WSCommand Websocket bridging
+        ws.on('message', (message) => {
             const parsed = JSON.parse(message.toString());
             const { type, data } = parsed;
 

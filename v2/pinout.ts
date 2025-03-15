@@ -34,7 +34,7 @@ class WSGpio extends WSSubscribableMixin {
         }
     }
 
-    subscriptionEvent(id: string) {
+    fireSubscription(id: string) {
         const data = mockPinData(this);
         if (data) {
             this.send({ id, data });

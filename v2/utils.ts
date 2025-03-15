@@ -25,7 +25,7 @@ export class Subscribable {
 
 export class SubscriptionEvents extends Subscribable {
 
-    subscriptionEvent(id: string, value2: string, subscriptions: Set<string>) { }
+    fireSubscription(id: string) { }
 
     listener: NodeJS.Timeout;
 
@@ -38,7 +38,7 @@ export class SubscriptionEvents extends Subscribable {
         this._timingMs = v;
 
         if (this.timingMs) {
-            this.listener = setInterval(() => this.subscriptions.forEach(this.subscriptionEvent), this.timingMs);
+            this.listener = setInterval(() => this.subscriptions.forEach((id) => this.fireSubscription(id)), this.timingMs);
         } else {
             clearInterval(this.listener);
         }

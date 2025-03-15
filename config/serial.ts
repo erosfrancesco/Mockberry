@@ -11,7 +11,7 @@ interface ISerialActionData {
     config: ISerialChannelConfig;
 }
 
-export interface ISerialSubscriptionRequestData {
+export interface ISerialRequestData {
     address: number;
     id: string;
     request: SerialServiceActions;

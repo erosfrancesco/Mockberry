@@ -1,8 +1,8 @@
-import { ISerialSubscriptionRequestData, ISerialSubscriptionResponse, ISerialUnsubscriptionResponse } from "../config/ws.ts";
+import { ISerialRequestData, ISerialSubscriptionResponse, ISerialUnsubscriptionResponse } from "../config/ws.ts";
 import { SerialBoard } from "./interface.ts";
 
-export const handleSubscribe = (data: ISerialSubscriptionRequestData, serial: SerialBoard, callback: (data: ISerialSubscriptionResponse["data"]) => void) => {
-    const { address, id } = data as ISerialSubscriptionRequestData;
+export const handleSubscribe = (data: ISerialRequestData, serial: SerialBoard, callback: (data: ISerialSubscriptionResponse["data"]) => void) => {
+    const { address, id } = data as ISerialRequestData;
     const channel = serial[address];
     const { subscribed, listening, ...config } = channel;
 
@@ -16,8 +16,8 @@ export const handleSubscribe = (data: ISerialSubscriptionRequestData, serial: Se
     callback(eventData);
 }
 
-export const handleUnsubscribe = (data: ISerialSubscriptionRequestData, serial: SerialBoard, callback: (data: ISerialUnsubscriptionResponse["data"]) => void) => {
-    const { address, id } = data as ISerialSubscriptionRequestData;
+export const handleUnsubscribe = (data: ISerialRequestData, serial: SerialBoard, callback: (data: ISerialUnsubscriptionResponse["data"]) => void) => {
+    const { address, id } = data as ISerialRequestData;
     const config = serial[address];
     const { subscribed, listening } = config;
 

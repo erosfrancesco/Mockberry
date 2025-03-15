@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { EventServiceType, ISerialSubscriptionRequestData, ISerialSubscriptionResponse, ISerialUnsubscriptionResponse, SerialServiceActions } from "../config/ws.ts";
+import { EventServiceType, ISerialRequestData, ISerialSubscriptionResponse, ISerialUnsubscriptionResponse, SerialServiceActions } from "../config/ws.ts";
 import updateMockSerialConnection, { serial } from "./serial.ts";
 import { handleSubscribe, handleUnsubscribe } from "./handlers.ts";
 
@@ -12,7 +12,7 @@ export const serialService = (ws: WebSocket) => {
             return;
         }
 
-        const { address, request } = parsed.data as ISerialSubscriptionRequestData;
+        const { address, request } = parsed.data as ISerialRequestData;
         const channel = serial[address];
 
         if (!channel) {
@@ -21,7 +21,7 @@ export const serialService = (ws: WebSocket) => {
         }
 
         if (request === SerialServiceActions.SUBSCRIBE) {
-            handleSubscribe(parsed.data as ISerialSubscriptionRequestData, serial, (data) => {
+            handleSubscribe(parsed.data as ISerialRequestData, serial, (data) => {
                 const event: ISerialSubscriptionResponse = {
                     type,
                     request: SerialServiceActions.SUBSCRIBE,
@@ -39,7 +39,7 @@ export const serialService = (ws: WebSocket) => {
         }
 
         if (request === SerialServiceActions.UNSUBSCRIBE) {
-            handleUnsubscribe(parsed.data as ISerialSubscriptionRequestData, serial, (data) => {
+            handleUnsubscribe(parsed.data as ISerialRequestData, serial, (data) => {
                 const event: ISerialUnsubscriptionResponse = {
                     type,
                     request: SerialServiceActions.UNSUBSCRIBE,
