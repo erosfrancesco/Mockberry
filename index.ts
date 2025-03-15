@@ -1,33 +1,23 @@
-const AdProviderMixin = (superclass) => class extends superclass {
-    constructor(ws) {
-        super();
-        this.ws = ws;
-    }
-    bar() {
-        console.log('bar');
-    }
-}
+import { WebSocketServer } from "ws";
+import { port, path } from "./config/ws.ts";
+import { WebSocketBridge, Console } from "./utils.ts";
 
-const SocialNetworkMixin = (superclass) => class extends superclass {
-    foo() {
-        console.log('foo');
-    }
-}
+import WSPinout from "./board/pinout.ts";
+import WSCommand from "./command.ts";
+import WSSerial from "./serial/serial.ts";
 
-class MixinBuilder {
-    static mix(...mixins) {
-        return mixins.reduce((c, mixin) => mixin(c), class { });
-    }
-}
+const wss = new WebSocketServer({ path, port });
+Console('Ready on localhost' + path + ':' + port);
 
-// this will combine everything in one class
-const mix = new MixinBuilder();
+wss.on('connection', function connection(ws) {
+    const _board = new WSBoard(ws);
 
-class Facebook extends MixinBuilder.mix(AdProviderMixin, SocialNetworkMixin) { 
-    constructor() {
-        super();
-        console.log('hello w orld')
-    }
-}
+    Console('Client connected');
+    ws.send('connected!');
+});
 
-const fb = new Facebook();
+class WSBoard extends WebSocketBridge {
+    i2c = new WSSerial(this.ws);
+    pinout = WSPinout(this.ws);
+    command = new WSCommand(this.ws);
+};

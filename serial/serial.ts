@@ -1,34 +1,35 @@
-import { ISerialDataResponse } from "../config/ws";
-import { Observable } from "../interfaces";
-import { SerialBoard } from "./interface";
+import WebSocket from "ws";
+import { Console, WSSubscribableMixin } from "../utils";
+import { EventServiceType, ISerialRequestData } from "../config/ws";
+import { WSSerialChannel } from './channel';
 
-// TODO: - Subscribe to subscribed, and check every time it has changed
-// subscribed get set
-export const serial: SerialBoard = {
-    0x68: {
-        subscribed: new Observable(new Set()), everyMs: 2000, config: {}
+
+export class WSSerial extends WSSubscribableMixin {
+    channels: { [key: string]: WSSerialChannel } = {};
+
+    constructor(ws: WebSocket) {
+        super(ws);
+        this.channels[0x68] = new WSSerialChannel(this.ws);
+
+        // WSCommand Websocket bridging
+        this.ws.on('message', (message) => {
+            try {
+                const parsed = JSON.parse(message.toString());
+                const { type, data } = parsed;
+
+                if (type !== EventServiceType.serial) {
+                    return;
+                }
+
+                const payload = data as ISerialRequestData;
+                const { address } = payload;
+                this.channels[address].handleAction(payload);
+            } catch (e) {
+                Console('Error Serial:', e);
+            }
+
+        });
     }
-};
-
-export const updateMockSerialConnection = (address: number, callback: (data: ISerialDataResponse) => void) => {
-    const channel = serial[address];
-    const { subscribed, everyMs, listening } = channel;
-
-    if (!subscribed.value.size) {
-        clearInterval(listening);
-        return;
-    }
-
-    if (listening) {
-        clearInterval(listening);
-    }
-
-    channel.listening = setInterval(() => subscribed.value.forEach((id) => callback(mockSerialData(id, address))), everyMs);
 }
 
-export const mockSerialData = (id: string, address: number) => {
-    const data: ISerialDataResponse = { address, id, data: {} };
-    return data;
-}
-
-export default updateMockSerialConnection;
+export default WSSerial;

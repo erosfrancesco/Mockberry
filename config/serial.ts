@@ -1,4 +1,4 @@
-import { WebSocketEvent } from "../interfaces";
+import { WebSocketEvent } from "../utils";
 import { SerialServiceActions } from "./ws";
 
 export interface ISerialChannelConfig {

@@ -1,16 +1,17 @@
 {
   "name": "mockberry",
   "version": "1.0.0",
-  "main": "ws.ts",
+  "main": "index.ts",
   "scripts": {
-    "start": "npx tsx ./ws.ts",
-    "startNew": "npx tsx ./v2/index.ts"
+    "watch": "nodemon --exec \"npx tsx ./index.ts\"",
+    "start": "npx tsx ./index.ts"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "@types/ws": "^8.5.14",
+    "nodemon": "^3.1.9",
     "socket.io": "^4.8.1",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"

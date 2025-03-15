@@ -1,5 +1,5 @@
-import { PinTypes } from "../gpio/interface";
-import { WebSocketEvent } from "../interfaces";
+import { PinTypes } from "../board/gpio";
+import { WebSocketEvent } from "../utils";
 import { GpioServiceActions } from "./ws";
 
 

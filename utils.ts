@@ -1,5 +1,14 @@
 import { WebSocket } from "ws";
+import { EventServiceType, GpioServiceActions, SerialServiceActions } from "./config/ws";
 
+// Interfaces
+export interface WebSocketEvent {
+    type: EventServiceType | string;
+    request?: SerialServiceActions | GpioServiceActions;
+    data: any;
+};
+
+// Classes
 export class WebSocketBridge {
     constructor(ws: WebSocket) {
         this.ws = ws;
@@ -44,6 +53,13 @@ export class SubscriptionEvents extends Subscribable {
         }
     }
 
+    subscribe(id: string) {
+        super.subscribe(id);
+
+        // fire event refresh
+        this.timingMs = this.timingMs;
+    }
+
     unsubscribe(id: string) {
         super.unsubscribe(id);
 
@@ -52,7 +68,6 @@ export class SubscriptionEvents extends Subscribable {
         }
     }
 }
-
 
 export class WSSubscribableMixin extends SubscriptionEvents implements WebSocketBridge {
     constructor(ws: WebSocket) {
@@ -66,3 +81,6 @@ export class WSSubscribableMixin extends SubscriptionEvents implements WebSocket
     }
 }
 
+
+// Functions
+export const Console = (...args) => console.log('[MOCK]:', ...args);

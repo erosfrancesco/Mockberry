@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { WSSubscribableMixin } from "./utils";
+import { Console, WSSubscribableMixin } from "../utils";
 import { EventServiceType, ISerialRequestData, SerialServiceActions } from "../config/ws";
 
 //
@@ -14,7 +14,7 @@ const mockSerialData = (): Object => {
 }
 //
 
-class WSSerialChannel extends WSSubscribableMixin {
+export class WSSerialChannel extends WSSubscribableMixin {
     constructor(ws: WebSocket) {
         super(ws);
         this.timingMs = 2000;
@@ -26,27 +26,34 @@ class WSSerialChannel extends WSSubscribableMixin {
 
             switch (request) {
                 case SerialServiceActions.SUBSCRIBE:
+                    Console('Subscription to serial channel');
                     this.handleSubscription(payload);
                     break;
                 case SerialServiceActions.UNSUBSCRIBE:
+                    Console('Unsubscription to serial channel');
                     this.handleUnsubscription(payload);
                     break;
                 case SerialServiceActions.WRITECONFIG:
+                    Console('Config write of serial channel');
                     this.handleSetConfig(payload);
                     break;
             }
         } catch (e) {
-            console.log("[MOCK] Error Serial Channel:", e);
+            Console('Error Serial Channel:', e);
         }
     };
+
+
 
     // on Subscription
     handleSubscription(payload: ISerialRequestData) {
         const { id } = payload;
         this.subscribe(id);
     }
+
     // on data fire
     fireSubscription(id: string) {
+        Console(' Serial channel data', id)
         const data = mockSerialData();
         if (data) {
             this.send({ id, data, type: EventServiceType.serial });
@@ -62,38 +69,9 @@ class WSSerialChannel extends WSSubscribableMixin {
     // on SetWrite
     handleSetConfig(payload: ISerialRequestData) {
         const { id } = payload;
-        console.log('write configs')
+        // TODO;
     }
 
 }
 
-
-export class WSSerial extends WSSubscribableMixin {
-    channels: { [key: string]: WSSerialChannel } = {};
-
-    constructor(ws: WebSocket) {
-        super(ws);
-        this.channels[0x68] = new WSSerialChannel(this.ws);
-
-        // WSCommand Websocket bridging
-        this.ws.on('message', (message) => {
-            try {
-                const parsed = JSON.parse(message.toString());
-                const { type, data } = parsed;
-
-                if (type !== EventServiceType.serial) {
-                    return;
-                }
-
-                const payload = data as ISerialRequestData;
-                const { address } = payload;
-                this.channels[address].handleAction(payload);
-            } catch (e) {
-                console.log("[MOCK] Error Serial:", e);
-            }
-
-        });
-    }
-}
-
-export default WSSerial;
+export default WSSerialChannel;

@@ -1,5 +1,5 @@
 import { EventServiceType } from "./ws";
-import { IWSWidget, WebSocketEvent } from "../interfaces";
+import { WebSocketEvent } from "../utils";
 
 export interface ICommandInputData {
     folder: IShellWidgetUIProps["folder"];
@@ -9,10 +9,9 @@ export interface ICommandInputData {
 export interface ICommandOutputData {
     folder: IShellWidgetUIProps["folder"];
     output: string;
-    // TODO: - User
 }
 
-export interface IShellWidgetUIProps extends IWSWidget {
+export interface IShellWidgetUIProps {
     folder?: string;
     events: MessageEvent<ICommandOutputData>[];
 }

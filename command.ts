@@ -1,5 +1,5 @@
-import { EventServiceType, ICommandInputData, ICommandOutputResponse } from "../config/ws";
-import { WebSocketBridge } from "./utils";
+import { EventServiceType, ICommandInputData, ICommandOutputResponse } from "./config/ws";
+import { WebSocketBridge } from "./utils.ts";
 
 export class WSCommand extends WebSocketBridge {
     constructor(ws) {
