@@ -1,9 +1,9 @@
 import { Subscribable, Intervallable } from '../interfaces.ts';
 
 export enum PinTypes {
-    INPUT = "input",
-    OUTPUT = "output",
-    SERVO = "servo"
+    INPUT,
+    OUTPUT,
+    SERVO
 }
 
 interface SubscriptionPin extends Subscribable, Intervallable {

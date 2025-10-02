@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import { EventServiceType, ISerialSubscriptionRequestData, ISerialSubscriptionResponse, ISerialUnsubscriptionResponse, SerialServiceActions } from "../config/ws.ts";
-import updateMockSerialConnection, { serial } from "./serial.ts";
+import { serial } from "./serial.ts";
 import { handleSubscribe, handleUnsubscribe } from "./handlers.ts";
 
 export const serialService = (ws: WebSocket) => {

@@ -19,7 +19,7 @@ export const handleSubscribe = (data: ISerialSubscriptionRequestData, serial: Se
 export const handleUnsubscribe = (data: ISerialSubscriptionRequestData, serial: SerialBoard, callback: (data: ISerialUnsubscriptionResponse["data"]) => void) => {
     const { address, id } = data as ISerialSubscriptionRequestData;
     const config = serial[address];
-    const { subscribed, listening } = config;
+    const { subscribed } = config;
 
     console.log('[MOCK]: Unsubscribe to Serial Address: ', address, id);
     if (subscribed.value.has(id)) {

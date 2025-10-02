@@ -1,13 +1,13 @@
 import { EventServiceType, GpioServiceActions, SerialServiceActions } from "./config/ws";
 
 export class Observable<T> {
-    constructor(public initialValue: T, callback?: Function) {
+    constructor(public initialValue: T, callback: Function = () => {}) {
         this.callback = callback;
         this.value = initialValue;
     }
 
-    callback?: Function;
-    private _value: T;
+    callback: Function;
+    private _value!: T;
 
     set value(v: T) {
         this._value = v;

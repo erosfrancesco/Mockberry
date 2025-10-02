@@ -2,7 +2,6 @@ import { ISerialDataResponse } from "../config/ws";
 import { Observable } from "../interfaces";
 import { SerialBoard } from "./interface";
 
-// TODO: - Subscribe to subscribed, and check every time it has changed
 // subscribed get set
 export const serial: SerialBoard = {
     0x68: {
@@ -10,6 +9,7 @@ export const serial: SerialBoard = {
     }
 };
 
+/*
 export const updateMockSerialConnection = (address: number, callback: (data: ISerialDataResponse) => void) => {
     const channel = serial[address];
     const { subscribed, everyMs, listening } = channel;
@@ -25,10 +25,11 @@ export const updateMockSerialConnection = (address: number, callback: (data: ISe
 
     channel.listening = setInterval(() => subscribed.value.forEach((id) => callback(mockSerialData(id, address))), everyMs);
 }
+/** */
 
 export const mockSerialData = (id: string, address: number) => {
     const data: ISerialDataResponse = { address, id, data: {} };
     return data;
 }
 
-export default updateMockSerialConnection;
+// export default updateMockSerialConnection;

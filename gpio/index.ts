@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { Board, PinOutput, PinTypes } from "./interface.ts";
 import { gpioService } from './gpio.ts';
+import { Observable } from "../interfaces.ts";
 
 
 export const mockPinOutput = (pin: number, callback: (data: any) => void) => {
@@ -20,19 +21,20 @@ export const mockPinOutput = (pin: number, callback: (data: any) => void) => {
     }, 2000);
 };
 
+
 export const board: Board = {
     4: {
         status: PinTypes.INPUT,
-        subscribed: new Set(),
+        subscribed: new Observable(new Set())
     },
     12: {
         status: PinTypes.OUTPUT,
-        subscribed: new Set(),
+        subscribed: new Observable(new Set()),
         data: 37,
     },
     16: {
         status: PinTypes.SERVO,
-        subscribed: new Set(),
+        subscribed: new Observable(new Set()),
         currentData: { hello: "World", fuck: "You World" }
     }
 };
