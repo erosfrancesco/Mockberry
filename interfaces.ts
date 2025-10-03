@@ -31,14 +31,14 @@ export interface Intervallable {
     everyMs?: number;
 }
 
-export interface WebSocketEvent {
+export interface WebSocketEvent<T> {
     type: EventServiceType | string;
     request?: SerialServiceActions | GpioServiceActions;
-    data: any;
+    data: T;
 };
 
-// 
-export type SendWebSocketEvent = (event: WebSocketEvent) => void;
+// UNUSED
+// export type SendWebSocketEvent<T> = (event: WebSocketEvent<T>) => void;
 
 export interface IWSWidget {
     send: (data: any) => void;

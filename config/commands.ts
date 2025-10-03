@@ -17,7 +17,6 @@ export interface IShellWidgetUIProps extends IWSWidget {
     events: MessageEvent<ICommandOutputData>[];
 }
 
-export interface ICommandOutputResponse extends WebSocketEvent {
-    data: ICommandOutputData;
+export interface ICommandOutputResponse extends WebSocketEvent<ICommandOutputData> {
     type: EventServiceType.command;
 }
