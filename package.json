@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "ws.ts",
   "scripts": {
-    "start": "npx tsx ./ws.ts"
+    "start": "npx tsx ./ws.ts",
+    "test": "npx tsx ./tests.ts"
   },
   "author": "",
   "license": "ISC",
