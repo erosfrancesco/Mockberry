@@ -10,11 +10,11 @@ const updateValue = (value: number) => {
 
 const clockPin = new Intervallable(
   initialValue,
+  1000,
+  updateValue,
   (value, sub) => {
     console.log("[Notified]: " + sub + " - " + value);
-  },
-  1000,
-  updateValue
+  }
 );
 
 const commandShell = new Subscribable("", (value, sub) =>

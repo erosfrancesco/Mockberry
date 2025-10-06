@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { EventServiceType, GpioServiceActions, IGpioOutputResponse, IGpioSubscriptionRequestData, IGpioSubscriptionResponse, IGpioUnsubscriptionResponse } from "../config/ws.ts";
 import { Board } from "./interface.ts";
-import { handlePinOutput, handleSubcribe, handleUnsubscribe } from "./handlers.ts";
+import { handlePinOutput, handleSubscribe, handleUnsubscribe } from "./handlers.ts";
 
 
 export const gpioService = (ws: WebSocket, board: Board) => {
@@ -22,7 +22,7 @@ export const gpioService = (ws: WebSocket, board: Board) => {
         }
 
         if (request === GpioServiceActions.SUBSCRIBE) {
-            handleSubcribe(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
+            handleSubscribe(parsed.data as IGpioSubscriptionRequestData, board, (data) => {
                 const event: IGpioSubscriptionResponse = { type, request: GpioServiceActions.SUBSCRIBE, data };
                 ws.send(JSON.stringify(event));
             });

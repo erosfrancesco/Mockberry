@@ -40,15 +40,20 @@ export class Subscribable<T> extends Observable<T> {
   }
 
   subscribe(id: string) {
-    this.subscribed.add(id);
-    this.callback = (value) =>
-      this.subscribed.forEach((id) => this._callback(value, id));
+    if (!this.subscribed.has(id)) {
+      this.subscribed.add(id);
+
+      this.callback = (value) =>
+        this.subscribed.forEach((id) => this._callback(value, id));
+    }
   }
 
   unsubscribe(id: string) {
-    this.subscribed.delete(id);
-    this.callback = (value) =>
-      this.subscribed.forEach((id) => this._callback(value, id));
+    if (!this.subscribed.has(id)) {
+      this.subscribed.delete(id);
+      this.callback = (value) =>
+        this.subscribed.forEach((id) => this._callback(value, id));
+    }
   }
 }
 
@@ -56,11 +61,11 @@ export class Subscribable<T> extends Observable<T> {
 export class Intervallable<T> extends Subscribable<T> {
   constructor(
     initialValue: T,
-    callback: SubscribableObservedCallback<T> = () => {},
     everyMs: number = 2000,
     update: (previous: T) => T = () => {
       return initialValue;
-    }
+    },
+    callback: SubscribableObservedCallback<T> = () => {}
   ) {
     super(initialValue, callback);
     this._update = update;

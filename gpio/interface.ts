@@ -1,29 +1,29 @@
-import { Subscribable, Intervallable } from '../interfaces.ts';
+import { Intervallable, Subscribable } from "../utils.ts";
 
 export enum PinTypes {
-    INPUT,
-    OUTPUT,
-    SERVO
+  INPUT,
+  OUTPUT,
+  SERVO,
 }
 
-interface SubscriptionPin extends Subscribable, Intervallable {
-    status: PinTypes;
+class IntervallablePin<T> extends Intervallable<T> {
+  status!: PinTypes;
 }
 
-export interface PinInput extends SubscriptionPin {
-    status: PinTypes.INPUT
+export class PinInput<T> extends Subscribable<T> {
+  status = PinTypes.INPUT;
 }
 
-export interface PinOutput extends SubscriptionPin {
-    status: PinTypes.OUTPUT;
-    data: any;
+export class PinOutput<T> extends IntervallablePin<T> {
+  status = PinTypes.OUTPUT;
+  data!: T;
 }
 
-export interface PinServo extends SubscriptionPin {
-    status: PinTypes.SERVO;
-    currentData: any;
+export class PinServo<T> extends IntervallablePin<T> {
+  status = PinTypes.SERVO;
+  currentData!: T;
 }
 
 export interface Board {
-    [key: number]: PinInput | PinOutput | PinServo
+  [key: number]: PinInput<number> | PinOutput<number> | PinServo<any>;
 }
